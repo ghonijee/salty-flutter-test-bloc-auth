@@ -20,6 +20,16 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  late bool obsecureText;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    setState(() {
+      obsecureText = true;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -79,15 +89,22 @@ class _LoginScreenState extends State<LoginScreen> {
                   // Password
                   TextField(
                     controller: passwordController,
-                    obscureText: true,
+                    obscureText: obsecureText,
                     decoration: InputDecoration(
+                        suffixIcon: InkWell(
+                            onTap: () {
+                              setState(() {
+                                obsecureText = !obsecureText;
+                              });
+                            },
+                            child: Icon(Icons.remove_red_eye)),
                         label: Text(
-                      "Password",
-                      style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                            color: BaseColor.Primary,
-                            fontWeight: FontWeight.w500,
-                          ),
-                    )),
+                          "Password",
+                          style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                                color: BaseColor.Primary,
+                                fontWeight: FontWeight.w500,
+                              ),
+                        )),
                   ),
                   SizedBox(
                     height: 24.sp,
@@ -95,6 +112,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ElevatedButton(
                     onPressed: () {
                       var data = LoginAuthModel(email: emailController.text, password: passwordController.text);
+                      // print(data.toJson());
                       context.read<LoginBloc>().add(LoginSubmitted(data));
                     },
                     style: ElevatedButton.styleFrom(
