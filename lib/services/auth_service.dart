@@ -8,11 +8,14 @@ class AuthService {
   Future<ApiResponseModel> login(LoginAuthModel model) async {
     Dio apiService = DioClient.init();
 
-    var response = await apiService.post("/login", data: model.toJson());
-    if (response.statusCode != 200) {
-      return ApiResponseModel.failed(response.data["error"]);
+    try {
+      var response = await apiService.post("/login", data: model.toJson());
+      if (response.statusCode != 200) {
+        return ApiResponseModel.failed(response.data["error"]);
+      }
+      return ApiResponseModel.success(TokenModel(token: response.data["token"]));
+    } on DioError catch (e) {
+      return ApiResponseModel.failed(e.response!.data["error"]);
     }
-
-    return ApiResponseModel.success(TokenModel(token: response.data["token"]));
   }
 }
